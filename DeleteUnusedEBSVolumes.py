@@ -1,10 +1,8 @@
 import boto3
 
-AWS_REGION = "us-east-1"
+ec2_client = boto3.resource('ec2', region_name='us-east-1')
 
-ec2_resource = boto3.resource('ec2', region_name=AWS_REGION)
-
-for volume in ec2_resource.volumes.filter(
+for volume in ec2_client.volumes.filter(
     Filters=[
         {
             'Name': 'status',
@@ -14,9 +12,11 @@ for volume in ec2_resource.volumes.filter(
         }
     ]
 ):
+
     if volume.state == "available":
         volume_id = volume.id
-        volume.delete()
-        print(f'Volume {volume_id} successfully deleted')
+        volume.delete() 
+        print(f'Volume {volume_id} successfully deleted unused EBS Volume') 
     else:
-        print(f"Can't delete volume attached to EC2 instance")
+        print(f"Can't delete volume attached to ec2 instance")
+
